@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smart_home_app/src/pages/sign-in.dart';
 
 import 'config/app_them.dart';
 import 'pages/home.dart';
@@ -10,7 +11,7 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.appTheme,
-      home: Home(),
+      home: SignIn(),
     );
   }
 }

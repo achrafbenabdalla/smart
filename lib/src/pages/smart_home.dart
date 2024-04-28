@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,9 @@ import 'package:smart_home_app/src/widgets/render_svg.dart';
 import '../controllers/smart_home_data.dart';
 import '../widgets/Ktext.dart';
 import '../widgets/hex_color.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class SmartHome extends StatefulWidget {
   @override
@@ -19,7 +24,19 @@ class _SmartHomeState extends State<SmartHome> {
 
   bool loading = false;
 
+  // Add a new Map to store the switch state for each item
+  Map<String, bool> switchStates = {};
+  final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+
   @override
+  void initState() {
+    super.initState();
+    // Initialize switchStates with default values (all false) based on smartModel length
+    for (var i = 0; i < smartModel.length; i++) {
+      switchStates['item_$i'] = false; // Use a unique key for each item
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -183,6 +200,7 @@ class _SmartHomeState extends State<SmartHome> {
                     primary: false,
                     itemBuilder: (BuildContext context, int index) {
                       final item = smartModel[index];
+                      final isSwitchedOn = switchStates['item_$index'];
                       return Container(
                         margin: EdgeInsets.only(
                           left: 15,
@@ -221,7 +239,7 @@ class _SmartHomeState extends State<SmartHome> {
                                     ],
                                   ),
                                   AnimatedToggleSwitch<bool>.dual(
-                                    current: positive,
+                                    current: isSwitchedOn!,
                                     first: false,
                                     second: true,
                                     dif: 10.0,
@@ -238,9 +256,16 @@ class _SmartHomeState extends State<SmartHome> {
                                       ),
                                     ],
                                     onChanged: (b) {
-                                      setState(() => positive = b);
+                                      setState(() {
+                                        switchStates['item_$index'] =
+                                            b; // Update state in switchStates
+                                        _updateLEDStatus(index,b); // Pass index and new state for LED control
+                                      });
                                       return Future.delayed(
-                                          Duration(seconds: 1));
+                                        Duration(
+                                            seconds:
+                                                1), // Optional delay, remove if not needed
+                                      );
                                     },
                                     colorBuilder: (b) =>
                                         b ? Colors.yellow[900] : Colors.teal,
@@ -333,17 +358,11 @@ class _SmartHomeState extends State<SmartHome> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      RenderSvg(
-                                        path: 'delete',
-                                        height: 18,
-                                      ),
+                                   
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      RenderSvg(
-                                        path: 'edit',
-                                        height: 18,
-                                      ),
+                                   
                                     ],
                                   )
                                 ],
@@ -364,5 +383,36 @@ class _SmartHomeState extends State<SmartHome> {
         ],
       ),
     );
+  }
+
+  void checkDatabaseConnection() {
+    FirebaseDatabase.instance
+        .ref()
+        .child("LEDControl")
+        .once()
+        .then((DataSnapshot snapshot) {
+          if (snapshot.value != null) {
+            print(
+                "Connexion à la base de données en temps réel Firebase réussie !");
+            print("Valeur actuelle de LEDControl : ${snapshot.value}");
+          } else {
+            print(
+                "Échec de la connexion à la base de données en temps réel Firebase !");
+          }
+        } as FutureOr Function(DatabaseEvent value))
+        .catchError((error) {
+      print(
+          "Erreur lors de la connexion à la base de données en temps réel Firebase: $error");
+    });
+  }
+
+  void _updateLEDStatus(int index, bool isOn) {
+    String status = isOn ? "LED ON" : "LED OFF";
+    print("Nouvel état de la LED $index: $status");
+    _databaseReference.child("LEDControl$index").set(status).then((_) {
+      print("Données mises à jour avec succès !");
+    }).catchError((error) {
+      print("Erreur lors de la mise à jour des données: $error");
+    });
   }
 }

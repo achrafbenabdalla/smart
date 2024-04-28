@@ -12,24 +12,16 @@ import 'smart_home.dart';
 class Home extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
-      HomePage(),
+
       SmartHome(),
-      PowerUser(),
-      ProfilePage(),
+      ProfilePage()
+   
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-        icon: Icon(EvaIcons.home),
-        title: ("Home"),
-        textStyle: TextStyle(fontWeight: FontWeight.bold),
-        activeColorPrimary: HexColor('#ffffff'),
-        activeColorSecondary: HexColor('#4C7380'),
-        inactiveColorPrimary: CupertinoColors.white,
-        inactiveColorSecondary: Colors.red,
-      ),
+
       PersistentBottomNavBarItem(
         icon: Icon(EvaIcons.optionsOutline),
         textStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -39,14 +31,7 @@ class Home extends StatelessWidget {
         inactiveColorPrimary: CupertinoColors.white,
         inactiveColorSecondary: Colors.red,
       ),
-      PersistentBottomNavBarItem(
-        textStyle: TextStyle(fontWeight: FontWeight.bold),
-        icon: Icon(EvaIcons.pieChart),
-        title: ("Usage"),
-        activeColorPrimary: HexColor('#ffffff'),
-        activeColorSecondary: HexColor('#4C7380'),
-        inactiveColorPrimary: CupertinoColors.white,
-      ),
+
       PersistentBottomNavBarItem(
         textStyle: TextStyle(fontWeight: FontWeight.bold),
         icon: Icon(EvaIcons.person),

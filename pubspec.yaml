@@ -36,14 +36,18 @@ dependencies:
   eva_icons_flutter:
   cupertino_icons: ^1.0.2
   persistent_bottom_nav_bar_v2: ^4.2.8
+  firebase_auth: ^4.6.3
   fl_chart:
   another_xlider: ^3.0.1
   animated_toggle_switch:
+  firebase_database: ^10.4.0
+  circular: ^0.0.5
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -57,6 +61,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
